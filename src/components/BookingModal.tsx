@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const services = [
   { id: "corte-mujer", name: "Corte Mujer", duration: "45 min" },
@@ -30,9 +31,10 @@ const timeSlots = [
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenPrivacy: () => void;
 }
 
-export function BookingModal({ isOpen, onClose }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, onOpenPrivacy }: BookingModalProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     service: "",
@@ -41,22 +43,25 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
     name: "",
     phone: "",
   });
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!privacyConsent) return;
     // Here you would integrate with your booking system
     setIsSubmitted(true);
     setTimeout(() => {
       setIsSubmitted(false);
       setStep(1);
       setFormData({ service: "", date: "", time: "", name: "", phone: "" });
+      setPrivacyConsent(false);
       onClose();
     }, 3000);
   };
 
   const canProceedStep1 = formData.service && formData.date && formData.time;
-  const canProceedStep2 = formData.name && formData.phone;
+  const canProceedStep2 = formData.name && formData.phone && privacyConsent;
 
   // Get minimum date (today)
   const today = new Date().toISOString().split("T")[0];
@@ -278,6 +283,30 @@ export function BookingModal({ isOpen, onClose }: BookingModalProps) {
                           <br />
                           <strong>Hora:</strong> {formData.time}
                         </p>
+                      </div>
+
+                      {/* RGPD Consent */}
+                      <div className="flex items-start space-x-3">
+                        <Checkbox
+                          id="privacy-consent"
+                          checked={privacyConsent}
+                          onCheckedChange={(checked) => setPrivacyConsent(checked === true)}
+                          className="mt-0.5 border-border data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                        />
+                        <label
+                          htmlFor="privacy-consent"
+                          className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
+                        >
+                          He leído y acepto la{" "}
+                          <button
+                            type="button"
+                            onClick={onOpenPrivacy}
+                            className="text-gold hover:underline font-medium"
+                          >
+                            Política de Privacidad
+                          </button>{" "}
+                          y consiento el tratamiento de mis datos personales para gestionar mi cita.
+                        </label>
                       </div>
 
                       <div className="flex gap-3">

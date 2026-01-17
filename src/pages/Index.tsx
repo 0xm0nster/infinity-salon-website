@@ -8,12 +8,17 @@ import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { CookieBanner } from "@/components/CookieBanner";
+import { PrivacyPolicyModal } from "@/components/PrivacyPolicyModal";
 
 const Index = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   const openBooking = () => setIsBookingOpen(true);
   const closeBooking = () => setIsBookingOpen(false);
+  const openPrivacy = () => setIsPrivacyOpen(true);
+  const closePrivacy = () => setIsPrivacyOpen(false);
 
   return (
     <div className="min-h-screen">
@@ -27,10 +32,12 @@ const Index = () => {
         <ContactSection onBookingClick={openBooking} />
       </main>
 
-      <Footer />
+      <Footer onOpenPrivacy={openPrivacy} />
       
-      <BookingModal isOpen={isBookingOpen} onClose={closeBooking} />
+      <BookingModal isOpen={isBookingOpen} onClose={closeBooking} onOpenPrivacy={openPrivacy} />
       <WhatsAppButton />
+      <CookieBanner />
+      <PrivacyPolicyModal isOpen={isPrivacyOpen} onClose={closePrivacy} />
     </div>
   );
 };
